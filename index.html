@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="theme-color" content="#7a1c24" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="最后一步" />
+    <title>最后一步 | 反诈微电影</title>
+    <link rel="manifest" href="manifest.webmanifest" />
+    <link rel="icon" href="icons/icon-192.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="icons/icon-512.svg" />
+    <style>
+        :root {
+            --bg: #130a12;
+            --bg-soft: #24111b;
+            --panel: rgba(31, 16, 23, 0.84);
+            --panel-strong: rgba(64, 20, 31, 0.92);
+            --text: #fff7f2;
+            --muted: #e8d4cc;
+            --accent: #ffb36b;
+            --danger: #ff6c72;
+            --safe: #9ce7b5;
+            --line: rgba(255, 255, 255, 0.12);
+            --shadow: 0 20px 60px rgba(0, 0, 0, 0.28);
+            --radius: 24px;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            background:
+                radial-gradient(circle at top, rgba(255, 171, 101, 0.16), transparent 28%),
+                radial-gradient(circle at 80% 20%, rgba(207, 47, 77, 0.18), transparent 18%),
+                linear-gradient(180deg, #100911 0%, #1b0c13 48%, #2d1319 100%);
+            color: var(--text);
+            font-family: "PingFang SC", "Microsoft YaHei", "Noto Sans SC", sans-serif;
+        }
+
+        body::before {
+            content: "";
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            background:
+                linear-gradient(120deg, rgba(255, 255, 255, 0.035) 0%, transparent 40%),
+                repeating-linear-gradient(
+                    180deg,
+                    transparent 0,
+                    transparent 22px,
+                    rgba(255, 255, 255, 0.015) 23px,
+                    transparent 24px
+                );
+            opacity: 0.85;
+        }
+
+        .app-shell {
+            position: relative;
+            width: min(100%, 760px);
+            margin: 0 auto;
+            padding: calc(24px + env(safe-area-inset-top)) 18px calc(28px + env(safe-area-inset-bottom));
+        }
+
+        .hero {
+            position: relative;
+            overflow: hidden;
+            padding: 26px 22px;
+            border: 1px solid var(--line);
+            border-radius: 30px;
+            background:
+                linear-gradient(140deg, rgba(113, 19, 30, 0.94), rgba(39, 10, 18, 0.92)),
+                linear-gradient(180deg, rgba(255, 255, 255, 0.05), transparent);
+            box-shadow: var(--shadow);
+        }
+
+        .hero::after {
+            content: "";
+            position: absolute;
+            right: -56px;
+            top: -36px;
+            width: 180px;
+            height: 180px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(255, 179, 107, 0.45), rgba(255, 179, 107, 0));
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 7px 12px;
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.08);
+            color: var(--muted);
+            font-size: 13px;
+            letter-spacing: 0.04em;
+        }
+
+        .hero h1 {
+            margin: 16px 0 10px;
+            font-size: clamp(34px, 7vw, 52px);
+            line-height: 1.05;
+            letter-spacing: 0.04em;
+        }
+
+        .hero p {
+            margin: 0;
+            max-width: 34em;
+            color: var(--muted);
+            line-height: 1.7;
+            font-size: 15px;
+        }
+
+        .hero-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-top: 22px;
+        }
+
+        button,
+        .link-button,
+        a.cta-link {
+            appearance: none;
+            border: 0;
+            cursor: pointer;
+            text-decoration: none;
+            transition: transform 0.2s ease, opacity 0.2s ease, background 0.2s ease;
+        }
+
+        button:hover,
+        .link-button:hover,
+        a.cta-link:hover {
+            transform: translateY(-1px);
+        }
+
+        button:active,
+        .link-button:active,
+        a.cta-link:active {
+            transform: translateY(0);
+        }
+
+        .primary-btn,
+        .secondary-btn,
+        .ghost-btn,
+        .cta-link {
+            min-height: 48px;
+            padding: 12px 18px;
+            border-radius: 16px;
+            font-size: 15px;
+            font-weight: 700;
+        }
+
+        .primary-btn {
+            background: linear-gradient(135deg, #ffb36b, #ff8468);
+            color: #2c1110;
+        }
+
+        .secondary-btn,
+        .cta-link {
+            background: rgba(255, 255, 255, 0.08);
+            color: var(--text);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .ghost-btn {
+            background: transparent;
+            color: var(--muted);
+            border: 1px dashed rgba(255, 255, 255, 0.18);
+        }
+
+        .install-tip {
+            margin-top: 12px;
+            color: rgba(255, 255, 255, 0.72);
+            font-size: 13px;
+            line-height: 1.6;
+        }
+
+        .section {
+            margin-top: 20px;
+            padding: 22px 18px;
+            border-radius: var(--radius);
+            border: 1px solid var(--line);
+            background: var(--panel);
+            backdrop-filter: blur(14px);
+            box-shadow: var(--shadow);
+        }
+
+        .section-head {
+            display: flex;
+            align-items: end;
+            justify-content: space-between;
+            gap: 14px;
+            margin-bottom: 16px;
+        }
+
+        .section-head h2 {
+            margin: 0;
+            font-size: 22px;
+        }
+
+        .section-head span {
+            color: var(--muted);
+            font-size: 13px;
+        }
+
+        .character-grid,
+        .scene-track,
+        .tool-grid {
+            display: grid;
+            gap: 14px;
+        }
+
+        .character-grid {
+            grid-template-columns: repeat(auto-fit, minmax(148px, 1fr));
+        }
+
+        .character-card {
+            padding: 16px;
+            border-radius: 20px;
+            background:
+                linear-gradient(180deg, rgba(255, 255, 255, 0.045), rgba(255, 255, 255, 0.02)),
+                rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .character-role {
+            color: var(--accent);
+            font-size: 12px;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+        }
+
+        .character-card h3 {
+            margin: 10px 0 6px;
+            font-size: 18px;
+        }
+
+        .character-card p {
+            margin: 0;
+            color: var(--muted);
+            line-height: 1.65;
+            font-size: 14px;
+        }
+
+        .viewer {
+            padding: 20px 18px 18px;
+        }
+
+        .timeline {
+            display: grid;
+            grid-template-columns: repeat(11, minmax(0, 1fr));
+            gap: 6px;
+            margin-bottom: 16px;
+        }
+
+        .timeline button {
+            min-height: 38px;
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--muted);
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        .timeline button.active {
+            background: linear-gradient(135deg, rgba(255, 179, 107, 0.96), rgba(255, 108, 114, 0.92));
+            color: #280d0f;
+        }
+
+        .scene-card {
+            position: relative;
+            overflow: hidden;
+            padding: 20px;
+            border-radius: 24px;
+            background:
+                radial-gradient(circle at top right, rgba(255, 179, 107, 0.14), transparent 28%),
+                linear-gradient(180deg, rgba(255, 255, 255, 0.045), rgba(255, 255, 255, 0.02));
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .scene-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            align-items: center;
+            color: var(--muted);
+            font-size: 13px;
+        }
+
+        .scene-pill {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 10px;
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.07);
+        }
+
+        .scene-card h3 {
+            margin: 14px 0 8px;
+            font-size: clamp(24px, 5vw, 34px);
+        }
+
+        .scene-summary {
+            margin: 0;
+            color: #ffe8de;
+            line-height: 1.75;
+            font-size: 15px;
+        }
+
+        .dialogue-list {
+            margin-top: 16px;
+            display: grid;
+            gap: 10px;
+        }
+
+        .dialogue {
+            padding: 14px 14px 13px;
+            border-radius: 18px;
+            background: rgba(255, 255, 255, 0.045);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+        }
+
+        .dialogue strong {
+            display: block;
+            margin-bottom: 7px;
+            color: var(--accent);
+            font-size: 13px;
+            letter-spacing: 0.04em;
+        }
+
+        .dialogue p {
+            margin: 0;
+            line-height: 1.7;
+            color: var(--text);
+            font-size: 15px;
+        }
+
+        .scene-warning,
+        .scene-clue {
+            margin-top: 16px;
+            padding: 14px 16px;
+            border-radius: 18px;
+            line-height: 1.7;
+            font-size: 14px;
+        }
+
+        .scene-warning {
+            background: rgba(255, 108, 114, 0.12);
+            color: #ffe3e6;
+            border: 1px solid rgba(255, 108, 114, 0.22);
+        }
+
+        .scene-clue {
+            background: rgba(156, 231, 181, 0.1);
+            color: #d9fbe3;
+            border: 1px solid rgba(156, 231, 181, 0.18);
+        }
+
+        .viewer-controls {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 10px;
+            margin-top: 16px;
+        }
+
+        .status-board {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 10px;
+            margin-top: 16px;
+        }
+
+        .status-card {
+            padding: 14px;
+            border-radius: 18px;
+            background: rgba(255, 255, 255, 0.045);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+        }
+
+        .status-card span {
+            display: block;
+            color: var(--muted);
+            font-size: 12px;
+            margin-bottom: 6px;
+        }
+
+        .status-card strong {
+            font-size: 18px;
+        }
+
+        .tool-grid {
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        }
+
+        .tool-card {
+            padding: 18px;
+            border-radius: 20px;
+            background: rgba(255, 255, 255, 0.045);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .tool-card h3 {
+            margin: 0 0 12px;
+            font-size: 18px;
+        }
+
+        .tool-card ul {
+            margin: 0;
+            padding-left: 18px;
+            color: var(--muted);
+            line-height: 1.8;
+            font-size: 14px;
+        }
+
+        .tool-card p {
+            margin: 0;
+            color: var(--muted);
+            line-height: 1.75;
+            font-size: 14px;
+        }
+
+        .tool-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 16px;
+        }
+
+        .floating-alert {
+            position: fixed;
+            left: 50%;
+            bottom: calc(16px + env(safe-area-inset-bottom));
+            transform: translateX(-50%) translateY(18px);
+            width: min(calc(100% - 24px), 480px);
+            padding: 13px 16px;
+            border-radius: 18px;
+            background: rgba(14, 8, 10, 0.94);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            color: var(--text);
+            box-shadow: var(--shadow);
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.25s ease, transform 0.25s ease;
+            z-index: 20;
+        }
+
+        .floating-alert.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        .footer-note {
+            margin-top: 18px;
+            color: rgba(255, 255, 255, 0.74);
+            font-size: 13px;
+            line-height: 1.7;
+            text-align: center;
+        }
+
+        @media (max-width: 640px) {
+            .app-shell {
+                padding-inline: 14px;
+            }
+
+            .viewer-controls,
+            .status-board {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+
+            .timeline {
+                grid-template-columns: repeat(4, minmax(0, 1fr));
+            }
+        }
+    </style>
+</head>
+<body>
+    <main class="app-shell">
+        <section class="hero">
+            <span class="badge">反诈微电影互动版</span>
+            <h1>《最后一步》</h1>
+            <p>
+                这是一部围绕“刷单返利诈骗”的手机端剧情小程序。观众可以按幕推进，看到林晓一步步被“甜头”诱导、被“最后一步”困住，再走向求助与报警。
+            </p>
+            <div class="hero-actions">
+                <button class="primary-btn" id="playToggle">自动放映</button>
+                <button class="secondary-btn" id="installButton" hidden>下载安装到手机</button>
+                <button class="ghost-btn" id="restartButton">从头开始</button>
+            </div>
+            <div class="install-tip" id="installTip">
+                安卓手机可通过浏览器“安装应用”保存到桌面；iPhone 可在 Safari 中选择“添加到主屏幕”。
+            </div>
+        </section>
+
+        <section class="section">
+            <div class="section-head">
+                <h2>人物设定</h2>
+                <span>角色关系一眼看清</span>
+            </div>
+            <div class="character-grid" id="characterGrid"></div>
+        </section>
+
+        <section class="section viewer">
+            <div class="section-head">
+                <h2>剧情放映</h2>
+                <span id="sceneCounter">第 1 / 11 场</span>
+            </div>
+            <div class="timeline" id="timeline"></div>
+            <article class="scene-card" id="sceneCard">
+                <div class="scene-meta">
+                    <span class="scene-pill" id="sceneAct"></span>
+                    <span id="sceneLocation"></span>
+                    <span id="sceneTone"></span>
+                </div>
+                <h3 id="sceneTitle"></h3>
+                <p class="scene-summary" id="sceneSummary"></p>
+                <div class="dialogue-list" id="dialogueList"></div>
+                <div class="scene-clue" id="sceneClue"></div>
+                <div class="scene-warning" id="sceneWarning"></div>
+            </article>
+            <div class="status-board">
+                <div class="status-card">
+                    <span>当前情绪</span>
+                    <strong id="statusEmotion">试探</strong>
+                </div>
+                <div class="status-card">
+                    <span>诈骗阶段</span>
+                    <strong id="statusRisk">诱导中</strong>
+                </div>
+                <div class="status-card">
+                    <span>反诈建议</span>
+                    <strong id="statusAction">先停手</strong>
+                </div>
+            </div>
+            <div class="viewer-controls">
+                <button class="secondary-btn" id="prevButton">上一场</button>
+                <button class="primary-btn" id="nextButton">下一场</button>
+                <button class="secondary-btn" id="copyButton">复制报警清单</button>
+                <button class="ghost-btn" id="jumpEndButton">查看结尾</button>
+            </div>
+        </section>
+
+        <section class="section">
+            <div class="section-head">
+                <h2>反诈工具包</h2>
+                <span>看完剧情立刻可用</span>
+            </div>
+            <div class="tool-grid">
+                <article class="tool-card">
+                    <h3>识别诈骗信号</h3>
+                    <ul>
+                        <li>先点赞、后返利、再让你垫付，属于典型刷单套路。</li>
+                        <li>群里“到账截图”常由托儿统一制造，目的就是打消戒心。</li>
+                        <li>对方一旦提到“解冻金”“征信受影响”“最后一步”，风险已经非常高。</li>
+                    </ul>
+                </article>
+                <article class="tool-card">
+                    <h3>被骗后怎么做</h3>
+                    <ul>
+                        <li>第一时间停止转账，不再和骗子继续博弈。</li>
+                        <li>保留聊天记录、转账记录、APP 页面、对方账号信息。</li>
+                        <li>立刻报警，也可以拨打 96110 进行咨询和预警。</li>
+                    </ul>
+                </article>
+                <article class="tool-card">
+                    <h3>应急联系方式</h3>
+                    <p>如果你在手机上打开本应用，可以直接点击下面的按钮发起拨号或回看警示清单。</p>
+                    <div class="tool-actions">
+                        <a class="cta-link" href="tel:110">拨打 110</a>
+                        <a class="cta-link" href="tel:96110">拨打 96110</a>
+                        <button class="secondary-btn" id="showChecklistButton">查看清单</button>
+                    </div>
+                </article>
+            </div>
+            <p class="footer-note">
+                结尾字幕：刷单返利都是诈骗｜谨防网络兼职骗局｜如遇诈骗，请立即报警
+            </p>
+        </section>
+    </main>
+
+    <div class="floating-alert" id="toast"></div>
+
+    <script src="app.js"></script>
+</body>
+</html>
